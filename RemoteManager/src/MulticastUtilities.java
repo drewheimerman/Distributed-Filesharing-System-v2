@@ -35,24 +35,65 @@ public class MulticastUtilities {
 	private int ttl = 1;
 	private InetAddress groupIP;
 	
-	public MulticastUtilities() throws IOException{
-		mSocket = new MulticastSocket(mPort);
-		mSocket.setInterface(InetAddress.getLocalHost());
-		mSocket.setTimeToLive(ttl);
+	public MulticastUtilities(){
+		try{
+			mSocket = new MulticastSocket(mPort);
+			mSocket.setInterface(InetAddress.getLocalHost());
+			mSocket.setTimeToLive(ttl);
+			joinGroup();
+		}catch(IOException e){
+			e.printStackTrace();
+		}
 		
 	}
-	public MulticastUtilities(InetAddress group, int port) throws IOException{
+	public MulticastUtilities(InetAddress group, int port){
 		groupIP = group;
 		mPort = port;
-		mSocket = new MulticastSocket(mPort);
-		mSocket.setInterface(InetAddress.getLocalHost());
-		mSocket.setTimeToLive(ttl);
+		try{
+			mSocket = new MulticastSocket(mPort);
+			mSocket.setInterface(InetAddress.getLocalHost());
+			mSocket.setTimeToLive(ttl);
+			joinGroup();
+		}catch(IOException e){
+			e.printStackTrace();
+		}
 	}
 
+	
+	/*
+	 * GETTERS AND SETTERS
+	 * 
+	 */
+	
 	public void joinGroup() throws IOException{
 		mSocket.joinGroup(groupIP);
-		//System.out.println(groupIP + " " + mPort);
-		//System.out.println(mSocket.getInetAddress());
+	}
+	public void leave() throws IOException{
+		mSocket.leaveGroup(groupIP);
+	}
+	public MulticastSocket getmSocket() {
+		return mSocket;
+	}
+	public void setmSocket(MulticastSocket mSocket) {
+		this.mSocket = mSocket;
+	}
+	public int getmPort() {
+		return mPort;
+	}
+	public void setmPort(int mPort) {
+		this.mPort = mPort;
+	}
+	public int getTtl() {
+		return ttl;
+	}
+	public void setTtl(int ttl) {
+		this.ttl = ttl;
+	}
+	public InetAddress getGroupIP() {
+		return groupIP;
+	}
+	public void setGroupIP(InetAddress groupIP) {
+		this.groupIP = groupIP;
 	}
 	public void leaveGroup() throws IOException{
 		mSocket.leaveGroup(groupIP);
