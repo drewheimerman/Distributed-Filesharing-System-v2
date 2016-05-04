@@ -56,9 +56,6 @@ public class RemoteManager {
 		Thread hbm = new Thread(hbManager);
 		hbm.start();
 		
-		
-		
-		
 	}
 
 }
