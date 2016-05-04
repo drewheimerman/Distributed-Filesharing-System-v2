@@ -105,7 +105,7 @@ public class MulticastUtilities {
 	 * 
 	 */
 	
-	public Object readFromSocket() throws Exception{
+	public Object readFromSocket() throws IOException{
 		byte[] buffer = new byte[BUFFER_SIZE];
 		DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
 		mSocket.receive(packet);
@@ -140,7 +140,7 @@ public class MulticastUtilities {
 		}
 	}
 	public void sendToSocket(String s) throws IOException{
-		byte[] buffer = new byte[1024];
+		byte[] buffer = new byte[BUFFER_SIZE];
 		buffer = s.getBytes();
 		if(buffer.length<BUFFER_SIZE){
 			mSocket.send(new DatagramPacket(buffer,buffer.length, groupIP, mPort));
