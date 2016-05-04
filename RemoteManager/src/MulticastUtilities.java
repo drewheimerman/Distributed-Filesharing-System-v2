@@ -48,7 +48,7 @@ public class MulticastUtilities {
 	}
 	public MulticastUtilities(InetAddress group, int port){
 		groupIP = group;
-		port = port;
+		this.port = port;
 		try{
 			socket = new MulticastSocket(port);
 			socket.setInterface(InetAddress.getLocalHost());
