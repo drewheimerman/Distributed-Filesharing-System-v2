@@ -4,6 +4,7 @@ import java.io.InputStream;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Properties;
+import java.util.concurrent.ConcurrentSkipListMap;
 
 public class RemoteManager {
 	
@@ -11,6 +12,8 @@ public class RemoteManager {
 	 * @param args : ID of the RemoteManager
 	 */
 	public static void main(String[] args) {
+		
+		ConcurrentSkipListMap<InetAddress, Integer> servers = new ConcurrentSkipListMap<InetAddress, Integer>();
 		
 		//Read in the Properties from config.properties
 		
@@ -45,15 +48,15 @@ public class RemoteManager {
 					Integer.parseInt(appProps.getProperty("serverMulticastPort"+t)));
 			
 		} catch (NumberFormatException | UnknownHostException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			System.exit(2);
 		}
-		try{
-			heartbeatMulticast.sendToSocket("existing server check");
-		}catch(Exception e){
-			e.printStackTrace();
-		}
+		//Create and start a HeartbeatMulticastManager thread to listen for new/existing servers
+		HeartbeatMulticastManager hbManager = new HeartbeatMulticastManager(heartbeatMulticast, servers);
+		Thread hbm = new Thread(hbManager);
+		hbm.start();
+		
+		
 		
 		
 	}
