@@ -10,7 +10,7 @@ public class MulticastUtilities {
 	 * 
 	 * MULTICAST UTILITIES
 	 * 	contains variabes:
-	 * 		MulticastSocket mSocket
+	 * 		MulticastSocket socket
 	 * 		int port
 	 * 		int ttl
 	 * 		InetAddress groupIP
@@ -18,8 +18,8 @@ public class MulticastUtilities {
 	 * 	contains methods:
 	 * 		joinGroup(), joins multicast group
 	 * 		leaveGroup(), leaves multicast group
-	 * 		readObjectFromSocket(), reads and deserializes object from the MulticastSocket mSocket
-	 * 		readStringFromSocket(), reads and returns a string from packet data
+	 * 		readObjectFrosocket(), reads and deserializes object from the MulticastSocket socket
+	 * 		readStringFrosocket(), reads and returns a string from packet data
 	 * 		sendToSocket(args), sends item with size less than const BUFFER_SIZE
 	 * 			args:
 	 * 				Object obj
@@ -30,16 +30,16 @@ public class MulticastUtilities {
 	 * 
 	 */
 	
-	private MulticastSocket mSocket;
-	private int mPort;
+	private MulticastSocket socket;
+	private int port;
 	private int ttl = 1;
 	private InetAddress groupIP;
 	
 	public MulticastUtilities(){
 		try{
-			mSocket = new MulticastSocket(mPort);
-			mSocket.setInterface(InetAddress.getLocalHost());
-			mSocket.setTimeToLive(ttl);
+			socket = new MulticastSocket(port);
+			socket.setInterface(InetAddress.getLocalHost());
+			socket.setTimeToLive(ttl);
 			joinGroup();
 		}catch(IOException e){
 			e.printStackTrace();
@@ -48,11 +48,11 @@ public class MulticastUtilities {
 	}
 	public MulticastUtilities(InetAddress group, int port){
 		groupIP = group;
-		mPort = port;
+		port = port;
 		try{
-			mSocket = new MulticastSocket(mPort);
-			mSocket.setInterface(InetAddress.getLocalHost());
-			mSocket.setTimeToLive(ttl);
+			socket = new MulticastSocket(port);
+			socket.setInterface(InetAddress.getLocalHost());
+			socket.setTimeToLive(ttl);
 			joinGroup();
 		}catch(IOException e){
 			e.printStackTrace();
@@ -66,22 +66,22 @@ public class MulticastUtilities {
 	 */
 	
 	public void joinGroup() throws IOException{
-		mSocket.joinGroup(groupIP);
+		socket.joinGroup(groupIP);
 	}
 	public void leave() throws IOException{
-		mSocket.leaveGroup(groupIP);
+		socket.leaveGroup(groupIP);
 	}
-	public MulticastSocket getmSocket() {
-		return mSocket;
+	public MulticastSocket getsocket() {
+		return socket;
 	}
-	public void setmSocket(MulticastSocket mSocket) {
-		this.mSocket = mSocket;
+	public void setsocket(MulticastSocket socket) {
+		this.socket = socket;
 	}
-	public int getmPort() {
-		return mPort;
+	public int getPort() {
+		return port;
 	}
-	public void setmPort(int mPort) {
-		this.mPort = mPort;
+	public void setPort(int port) {
+		this.port = port;
 	}
 	public int getTtl() {
 		return ttl;
@@ -96,8 +96,8 @@ public class MulticastUtilities {
 		this.groupIP = groupIP;
 	}
 	public void leaveGroup() throws IOException{
-		mSocket.leaveGroup(groupIP);
-		mSocket.close();
+		socket.leaveGroup(groupIP);
+		socket.close();
 	}
 	
 	/*
@@ -105,24 +105,30 @@ public class MulticastUtilities {
 	 * 
 	 */
 	
-	public Object readFromSocket() throws IOException{
+	public Object readFrosocket() throws IOException{
 		byte[] buffer = new byte[BUFFER_SIZE];
 		DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
-		mSocket.receive(packet);
+		socket.receive(packet);
 		Object received = deserializeObject(buffer);
 		return 	received;
 	}
-	public String readStringFromSocket() throws IOException{
+	public String readStringFrosocket() throws IOException{
 		byte[] buffer = new byte[BUFFER_SIZE];
 		DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
-		mSocket.receive(packet);
+		socket.receive(packet);
 		return new String(packet.getData(), 0, packet.getLength());
 	}
-	public byte[] readBytesFromSocket() throws IOException{
+	public byte[] readBytesFrosocket() throws IOException{
 		byte[] buffer = new byte[BUFFER_SIZE];
 		DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
-		mSocket.receive(packet);
-		return buffer;
+		socket.receive(packet);
+		return packet.getData();
+	}
+	public DatagramPacket listen() throws IOException{
+		byte[] buffer = new byte[BUFFER_SIZE];
+		DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
+		socket.receive(packet);
+		return packet;
 	}
 	
 	/*
@@ -134,7 +140,7 @@ public class MulticastUtilities {
 		byte[] buffer;
 		buffer = baos.toByteArray();
 		if(buffer.length<BUFFER_SIZE){
-			mSocket.send(new DatagramPacket(buffer,buffer.length, groupIP, mPort));
+			socket.send(new DatagramPacket(buffer,buffer.length, groupIP, port));
 		}else{
 			System.err.println("The data is too large to send.");
 		}
@@ -143,14 +149,14 @@ public class MulticastUtilities {
 		byte[] buffer = new byte[BUFFER_SIZE];
 		buffer = s.getBytes();
 		if(buffer.length<BUFFER_SIZE){
-			mSocket.send(new DatagramPacket(buffer,buffer.length, groupIP, mPort));
+			socket.send(new DatagramPacket(buffer,buffer.length, groupIP, port));
 		}else{
 			System.err.println("The data is too large to send.");
 		}
 	}
 	public void sendToSocket(byte[] b) throws IOException{
 		if(b.length<BUFFER_SIZE){
-			mSocket.send(new DatagramPacket(b,b.length, groupIP, mPort));
+			socket.send(new DatagramPacket(b,b.length, groupIP, port));
 		}else{
 			System.err.println("The data is too large to send.");
 		}
