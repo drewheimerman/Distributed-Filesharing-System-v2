@@ -13,7 +13,7 @@ public class RemoteManager {
 	 */
 	public static void main(String[] args) {
 		
-		ConcurrentSkipListMap<InetAddress, Integer> servers = new ConcurrentSkipListMap<InetAddress, Integer>();
+		ConcurrentSkipListMap<Integer, String[]> servers = new ConcurrentSkipListMap<Integer, String[]>();
 		
 		//Read in the Properties from config.properties
 		
