@@ -32,11 +32,18 @@ public class RemoteManager {
 		MulticastUtilities rmMulticast = null;
 		MulticastUtilities heartbeatMulticast = null;
 		MulticastUtilities serverMulticast = null;
+		MulticastUtilities rmRequestMulticast = null;
+		
+		
+		UDPUtilities udpUtilGen = new UDPUtilities(7778);
 		
 		try {
 			rmMulticast = new MulticastUtilities(
 					InetAddress.getByName(appProps.getProperty("rmMulticastIP")), 
 					Integer.parseInt(appProps.getProperty("rmMulticastPort")));
+			rmRequestMulticast = new MulticastUtilities(
+					InetAddress.getByName(appProps.getProperty("rmRequestMulticastIP")),
+					Integer.parseInt(appProps.getProperty("rmRequestMulticastPort")));
 			
 			int t = Integer.parseInt(args[0]);
 			heartbeatMulticast = new MulticastUtilities(
@@ -55,6 +62,11 @@ public class RemoteManager {
 		HeartbeatMulticastManager hbManager = new HeartbeatMulticastManager(heartbeatMulticast, servers);
 		Thread hbm = new Thread(hbManager);
 		hbm.start();
+		
+		RequestThreadManager requestManager = new RequestThreadManager(rmRequestMulticast, servers);
+		Thread reqManagerThread = new Thread(requestManager);
+		reqManagerThread.start();
+		
 		
 	}
 
