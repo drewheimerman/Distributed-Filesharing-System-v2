@@ -4,6 +4,7 @@ import java.io.InputStream;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Properties;
+import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.ConcurrentSkipListMap;
 
 public class RemoteManager {
@@ -13,6 +14,10 @@ public class RemoteManager {
 	 */
 	public static void main(String[] args) {
 		
+		int state;
+		int stateChanged;
+		ConcurrentLinkedDeque updateLog = new ConcurrentLinkedDeque();
+		ConcurrentLinkedDeque committed = new ConcurrentLinkedDeque();
 		ConcurrentSkipListMap<Integer, String[]> servers = new ConcurrentSkipListMap<Integer, String[]>();
 		
 		//Read in the Properties from config.properties
