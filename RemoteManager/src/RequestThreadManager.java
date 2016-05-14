@@ -29,17 +29,17 @@ public class RequestThreadManager implements Runnable {
 				serverSocket = new ServerSocket();
 				serverSocket.setSoTimeout(2000);
 				serverSocket.bind(null);
-				Pattern pattern = Pattern.compile("\\d+");
-				Matcher matcher = null;
-				String query = "";
-				DatagramPacket p = null;
-				
-				while(matcher == null || matcher.matches()){
-					p = mUtil.listen();
-					query = new String(p.getData(), 0, p.getLength());
+				//Pattern pattern = Pattern.compile("\\d+");
+				//Matcher matcher = null;
+				//String query = "";
+				DatagramPacket p = mUtil.listen();
+				String query = new String(p.getData(), 0, p.getLength());
+				//while(matcher == null || matcher.matches()){
+					//p = mUtil.listen();
+					//query = new String(p.getData(), 0, p.getLength());
 					
-					matcher = pattern.matcher(query);
-				}
+					//matcher = pattern.matcher(query);
+				//}
 				System.err.println(query);
 				mUtil.sendToSocket(serverSocket.getLocalPort()+"");
 				System.out.println(serverSocket.getLocalPort());
