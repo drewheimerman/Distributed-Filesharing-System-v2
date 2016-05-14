@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.Properties;
 
 public class Client {
@@ -22,14 +23,23 @@ public class Client {
 		}
 		
 		MulticastUtilities requestMulticast = null;
+		InetAddress feAddress = null;
 		
-		try{
+		//Set the address for the Frontend provided in the args
+		try {
+			feAddress = InetAddress.getByName(args[0]);
+		} catch (UnknownHostException e1) {
+			
+			e1.printStackTrace();
+		}
+		
+		/*try{
 			requestMulticast = new MulticastUtilities(
 					InetAddress.getByName(appProps.getProperty("rmRequestMulticastIP")),
 					Integer.parseInt(appProps.getProperty("rmRequestMulticastPort")));
 		}catch(IOException e){
 			e.printStackTrace();
-		}
+		}*/
 		String action = "";
 		String filename = "";
 		do{
@@ -59,13 +69,20 @@ public class Client {
 		
 		/*----Start client thread which then makes connection to Broker/RM----*/
 		
-		ClientThread clientThread = new ClientThread(requestMulticast, action, filename);
-		Thread t = new Thread(clientThread);
-		t.start();
 		try {
+			FilePacket fpacket = new FilePacket();
+			fpacket.setFilename(filename);
+			if(action.equals("upload")){
+				fpacket.setOperation(1);
+			}else{
+				fpacket.setOperation(0);
+			}
+			System.out.println(fpacket.getFilename()+"\noperation :"+fpacket.getOperation());
+			ClientThread clientThread = new ClientThread(feAddress, fpacket);
+			Thread t = new Thread(clientThread);
+			t.start();
 			t.join();
-		} catch (InterruptedException e) {
-			
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		

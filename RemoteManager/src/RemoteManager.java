@@ -4,6 +4,7 @@ import java.io.InputStream;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Properties;
+import java.util.Vector;
 import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.ConcurrentSkipListMap;
 
@@ -15,7 +16,7 @@ public class RemoteManager {
 	public static void main(String[] args) {
 		
 		int state;
-		int stateChanged;
+		Vector stateTimestamp = new Vector();
 		ConcurrentLinkedDeque updateLog = new ConcurrentLinkedDeque();
 		ConcurrentLinkedDeque committed = new ConcurrentLinkedDeque();
 		ConcurrentSkipListMap<Integer, String[]> servers = new ConcurrentSkipListMap<Integer, String[]>();
