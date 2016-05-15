@@ -1,16 +1,18 @@
 
 public class HeartbeatPulse implements Runnable {
 	private MulticastUtilities heartbeatMulticast;
+	private int port;
 	
-	public HeartbeatPulse(MulticastUtilities m){
+	public HeartbeatPulse(MulticastUtilities m, int p){
 		heartbeatMulticast = m;
+		port = p;
 	}
 	
 	@Override
 	public void run() {
 		while(true){
 			try{
-				heartbeatMulticast.sendToSocket("ping");
+				heartbeatMulticast.sendToSocket(""+port);
 			}catch(Exception e){
 				e.printStackTrace();
 			}
