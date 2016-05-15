@@ -21,6 +21,9 @@ public class RemoteManager {
 	public static void main(String[] args) {
 		
 		Management management = new RemoteManager().new Management();
+		management.stateTimestamp.add(0, new Integer(0));
+		management.stateTimestamp.add(1, new Integer(0));
+		management.stateTimestamp.add(2, new Integer(0));
 		/*int state;
 		Vector<Integer> stateTimestamp = new Vector<Integer>(3);
 		
@@ -76,7 +79,7 @@ public class RemoteManager {
 		HeartbeatMulticastManager hbManager = new HeartbeatMulticastManager(heartbeatMulticast, servers);
 		Thread hbm = new Thread(hbManager);
 		hbm.start();
-		
+		System.out.println("request thread manager");
 		RequestThreadManager requestManager = new RequestThreadManager(rmRequestMulticast, servers, management);
 		Thread reqManagerThread = new Thread(requestManager);
 		reqManagerThread.start();

@@ -40,10 +40,6 @@ public class ClientThread implements Runnable {
 	@Override
 	public void run() {
 		System.out.println("thread started");
-		
-		
-		
-		
 		try{
 			//Set up 2-way communication streams on the TCP socket with the RM
 			OutputStream os = socket.getOutputStream();
@@ -54,6 +50,7 @@ public class ClientThread implements Runnable {
 				
 			}
 			ObjectOutputStream oos = new ObjectOutputStream(os);
+			System.err.println("send fpacket");
 			oos.writeObject(fpacket);
 			oos.flush();
 			
@@ -64,11 +61,8 @@ public class ClientThread implements Runnable {
 			if(resultFilePacket.success()){
 				System.out.println("success");
 			}
-			
-			
 			ois.close();
-			oos.close();
-			
+			oos.close();	
 		}catch(IOException e){
 			e.printStackTrace();
 		} catch (ClassNotFoundException e) {

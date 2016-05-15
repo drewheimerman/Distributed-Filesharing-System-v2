@@ -16,10 +16,9 @@ public class Frontend {
 	public static void main(String[] args) throws IOException {
 		
 		Vector<Integer> timestamp = new Vector<Integer>(3);
-		timestamp.insertElementAt(0, 0);
-		timestamp.insertElementAt(0, 1);
-		timestamp.insertElementAt(0, 2);
-		
+		timestamp.add(0);
+		timestamp.add(0);
+		timestamp.add(0);
 		MulticastUtilities requestMulticast = null;
 		
 		Properties properties = new Properties();
@@ -42,6 +41,7 @@ public class Frontend {
 		while(true){
 			try{
 				Socket client = feSocket.accept();
+				System.err.println("Accepted");
 				Thread t = new Thread(new FrontendThread(requestMulticast,client, timestamp));
 				t.start();
 			}catch(IOException e){

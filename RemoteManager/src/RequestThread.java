@@ -20,6 +20,7 @@ public class RequestThread implements Runnable {
 	private ConcurrentSkipListMap<Integer, String[]> availableServers;
 	private DatagramPacket clientPacket;
 	private Socket client;
+	private Socket server;
 	private RemoteManager.Management management;
 	
 	public RequestThread(Socket s, ConcurrentSkipListMap<Integer, String[]> c, DatagramPacket p, RemoteManager.Management m){
@@ -41,25 +42,41 @@ public class RequestThread implements Runnable {
 			ois = new ObjectInputStream(is);
 			
 			FilePacket fpacket = (FilePacket)ois.readObject();
-			
+			System.err.println("get FilePacket");
 			//IF THE FilePacket HAS A TIMESTAMP <= THE RM TIMESTAMP
+			System.out.println(fpacket.getPreviousTimestamp()+""+management.getStateTimestamp());
 			if(fpacket.getPreviousTimestamp().get(0) <= management.getStateTimestamp().get(0) 
 					&& fpacket.getPreviousTimestamp().get(1) <= management.getStateTimestamp().get(1) 
 					&& fpacket.getPreviousTimestamp().get(2) <= management.getStateTimestamp().get(2)){
-				
-				if(fpacket.getOperation()==0){
-					//fpacket.setBuffer(management.readFile(fpacket));
-				}else{
+				Iterator it = availableServers.keySet().iterator();
+				System.err.println("About to iterate");
+				while(it.hasNext()){
+					System.err.println("iterating");
+					Integer i = (Integer) it.next();
+					String[] s = availableServers.get(i);
+					server = new Socket(InetAddress.getByName(s[0]), i+2000);
 					
+					OutputStream sos = server.getOutputStream();
+					InputStream sis = server.getInputStream();
+					ObjectOutputStream serverOOP = new ObjectOutputStream(sos);
+					ObjectInputStream serverOIS = new ObjectInputStream(sis);
+					
+					serverOOP.writeObject(fpacket);
+					fpacket = (FilePacket) serverOIS.readObject();
 				}
+				//fpacket = (FilePacket)ois.readObject();
+				oos.writeObject(fpacket);
 				
+			}else{
+				System.out.println("HERE");
+				management.holdback.add(fpacket);
 			}
 			
-			fpacket.success(true);
-			oos.writeObject(fpacket);
+			//fpacket.success(true);
+			//oos.writeObject(fpacket);
 			oos.flush();
-			oos.close();
-			ois.close();
+			//oos.close();
+			//ois.close();
 		} catch (IOException | ClassNotFoundException e) {
 			e.printStackTrace();
 		}

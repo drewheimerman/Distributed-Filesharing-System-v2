@@ -42,6 +42,28 @@ public class Server {
 		ServerHeartbeat heartbeat = new ServerHeartbeat(heartbeatMulticast, sid);
 		Thread serverHeartbeat = new Thread(heartbeat);
 		serverHeartbeat.start();
+		
+		ServerSocket socket;
+		try {
+			socket = new ServerSocket(sid+2000);
+		
+			while(true){
+				try {
+					System.out.println(sid+2000);
+					Socket rm = socket.accept();
+					System.err.println("Accepted ServerSocket");
+					ServerUpdater updater = new ServerUpdater(rm);
+					Thread u = new Thread(updater);
+					u.start();
+				} catch (IOException e) {
+					
+					e.printStackTrace();
+				}
+				
+			}
+		}catch(Exception e){
+			
+		}
 	}
 
 }

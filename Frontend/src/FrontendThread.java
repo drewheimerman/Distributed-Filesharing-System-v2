@@ -28,6 +28,7 @@ public class FrontendThread implements Runnable {
 			ObjectInputStream ois = new ObjectInputStream(is);
 			FilePacket fpacket = (FilePacket)ois.readObject();
 			fpacket.setUuid(new UUID(10000L, 1000L));
+			fpacket.setTimestamp(timestamp);
 			
 			requestMulticast.sendToSocket("request");
 			DatagramPacket response = requestMulticast.listen();
