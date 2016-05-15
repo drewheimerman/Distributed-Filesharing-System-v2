@@ -39,6 +39,9 @@ public class RequestThread implements Runnable {
 			ois = new ObjectInputStream(is);
 			
 			FilePacket fpacket = (FilePacket)ois.readObject();
+			
+			
+			
 			fpacket.success(true);
 			oos.writeObject(fpacket);
 			oos.flush();

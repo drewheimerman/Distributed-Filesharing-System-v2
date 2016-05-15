@@ -15,12 +15,13 @@ public class RemoteManager {
 	 */
 	public static void main(String[] args) {
 		
-		int state;
+		
+		/*int state;
 		Vector<Integer> stateTimestamp = new Vector<Integer>(3);
 		
 		ConcurrentLinkedDeque updateLog = new ConcurrentLinkedDeque();
 		ConcurrentLinkedDeque committed = new ConcurrentLinkedDeque();
-		ConcurrentLinkedDeque timestampTable = new ConcurrentLinkedDeque();
+		ConcurrentLinkedDeque timestampTable = new ConcurrentLinkedDeque();*/
 		ConcurrentSkipListMap<Integer, String[]> servers = new ConcurrentSkipListMap<Integer, String[]>();
 		
 		//Read in the Properties from config.properties
@@ -77,5 +78,15 @@ public class RemoteManager {
 		
 		
 	}
-
+	public class Management{
+		/*State Manager*/
+		public int state;
+		public Vector<Integer> stateTimestamp = new Vector<Integer>(3);
+		/*Replica Manager*/
+		public Vector<Integer> replicaTimestamp = new Vector<Integer>(3);
+		public ConcurrentLinkedDeque updateLog = new ConcurrentLinkedDeque();
+		/*Extras*/
+		public ConcurrentLinkedDeque committed = new ConcurrentLinkedDeque();
+		public ConcurrentLinkedDeque timestampTable = new ConcurrentLinkedDeque();
+	}
 }

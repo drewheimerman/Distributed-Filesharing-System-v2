@@ -1,6 +1,8 @@
 import java.io.*;
 import java.net.*;
+import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.ConcurrentSkipListMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -15,9 +17,11 @@ public class RequestThreadManager implements Runnable {
 	private ConcurrentSkipListMap<Integer, String[]> servers;
 	private ServerSocket serverSocket;
 	
-	public RequestThreadManager(MulticastUtilities u, ConcurrentSkipListMap<Integer, String[]> c){
+	
+	
+	
+	public RequestThreadManager(MulticastUtilities u, ConcurrentSkipListMap<Integer,String[]> c){
 		mUtil = u;
-		//executor = Executors.newFixedThreadPool(5);
 		servers = c;
 	}
 	
@@ -58,5 +62,7 @@ public class RequestThreadManager implements Runnable {
 			e.printStackTrace();
 		}
 	}
-
+	
 }
+
+
