@@ -16,13 +16,14 @@ public class RequestThreadManager implements Runnable {
 	private ExecutorService executor;
 	private ConcurrentSkipListMap<Integer, String[]> servers;
 	private ServerSocket serverSocket;
+	private RemoteManager.Management management;
 	
 	
 	
-	
-	public RequestThreadManager(MulticastUtilities u, ConcurrentSkipListMap<Integer,String[]> c){
+	public RequestThreadManager(MulticastUtilities u, ConcurrentSkipListMap<Integer,String[]> c, RemoteManager.Management m){
 		mUtil = u;
 		servers = c;
+		management = m;
 	}
 	
 	@Override
@@ -51,7 +52,7 @@ public class RequestThreadManager implements Runnable {
 					Socket client = serverSocket.accept();
 					serverSocket.close();
 					System.out.println("RequestThreadManager: "+(new String(p.getData(), 0, p.getLength())));
-					Thread t = new Thread(new RequestThread(client,servers,p));
+					Thread t = new Thread(new RequestThread(client,servers,p, management));
 					t.start();
 				}catch(SocketTimeoutException e){
 					//System.out.println("beaten");

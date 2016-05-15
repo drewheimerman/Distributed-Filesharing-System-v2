@@ -16,7 +16,7 @@ public class FilePacket implements Serializable{
 	 */
 	
 	private UUID uuid;
-	private Vector timestamp;
+	private Vector<Integer> timestamp;
 	private int md5;
 	
 	private String filename;
@@ -33,10 +33,10 @@ public class FilePacket implements Serializable{
 	public void setUuid(UUID uuid) {
 		this.uuid = uuid;
 	}
-	public Vector getPreviousTimestamp(){
+	public Vector<Integer> getPreviousTimestamp(){
 		return timestamp;
 	}
-	public void setTimestamp(Vector v){
+	public void setTimestamp(Vector<Integer> v){
 		timestamp = v;
 	}
 	public int getMd5() {

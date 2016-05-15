@@ -20,12 +20,14 @@ public class RequestThread implements Runnable {
 	private ConcurrentSkipListMap<Integer, String[]> availableServers;
 	private DatagramPacket clientPacket;
 	private Socket client;
+	private RemoteManager.Management management;
 	
-	public RequestThread(Socket s, ConcurrentSkipListMap<Integer, String[]> c, DatagramPacket p){
+	public RequestThread(Socket s, ConcurrentSkipListMap<Integer, String[]> c, DatagramPacket p, RemoteManager.Management m){
 		//udpUtil = new UDPUtilities();
 		availableServers = c;
 		clientPacket = p;
 		client = s;
+		management = m;
 	}
 	
 	@Override
@@ -40,7 +42,18 @@ public class RequestThread implements Runnable {
 			
 			FilePacket fpacket = (FilePacket)ois.readObject();
 			
-			
+			//IF THE FilePacket HAS A TIMESTAMP <= THE RM TIMESTAMP
+			if(fpacket.getPreviousTimestamp().get(0) <= management.getStateTimestamp().get(0) 
+					&& fpacket.getPreviousTimestamp().get(1) <= management.getStateTimestamp().get(1) 
+					&& fpacket.getPreviousTimestamp().get(2) <= management.getStateTimestamp().get(2)){
+				
+				if(fpacket.getOperation()==0){
+					//fpacket.setBuffer(management.readFile(fpacket));
+				}else{
+					
+				}
+				
+			}
 			
 			fpacket.success(true);
 			oos.writeObject(fpacket);
