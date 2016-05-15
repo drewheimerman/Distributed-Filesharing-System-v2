@@ -27,12 +27,12 @@ public class Server {
 		
 		try {
 			heartbeatMulticast = new MulticastUtilities(
-					InetAddress.getByName(appProps.getProperty("serverMulticastIP"+sid)),
+					InetAddress.getByName(appProps.getProperty("serverMulticastIP"+sid%3)),
 					Integer.parseInt(appProps.getProperty("heartbeatMulticastPort")));
 			
 			serverMulticast = new MulticastUtilities(
-					InetAddress.getByName(appProps.getProperty("serverMulticastIP"+sid)), 
-					Integer.parseInt(appProps.getProperty("serverMulticastPort"+sid)));
+					InetAddress.getByName(appProps.getProperty("serverMulticastIP"+sid%3)), 
+					Integer.parseInt(appProps.getProperty("serverMulticastPort"+sid%3)));
 			
 		} catch (NumberFormatException | UnknownHostException e) {
 			e.printStackTrace();

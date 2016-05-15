@@ -45,27 +45,24 @@ public class ServerUpdater implements Runnable {
 		File file = new File("./"+fpacket.getFilename());
 		try {
 			FileOutputStream fos = new FileOutputStream(file);
-			//fos.write(fpacket.getBuffer(), 0, fpacket.getBuffer().length);
+			if(fpacket.getBuffer()!=null)
+				fos.write(fpacket.getBuffer(), 0, fpacket.getBuffer().length);
 			fpacket.success(true);
-		} catch (FileNotFoundException e) {
-			fpacket.success(false);
-			e.printStackTrace();
 		} catch (IOException e) {
 			fpacket.success(false);
-			e.printStackTrace();
-		}		
+		}
 	}
 	private synchronized void read(FilePacket fpacket){
 		byte[] buffer = null;
 		try {
 			buffer = Files.readAllBytes((Path)Paths.get(fpacket.getFilename()));
 			fpacket.setBuffer(buffer);
+			System.err.println("Byte Array: "+buffer.length);
 			fpacket.success(true);
 		} catch (IOException e) {
 			fpacket.success(false);
 			e.printStackTrace();
 		}
-		
 	}
 
 }

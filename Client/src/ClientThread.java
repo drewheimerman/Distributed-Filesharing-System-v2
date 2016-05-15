@@ -46,8 +46,7 @@ public class ClientThread implements Runnable {
 			InputStream is = socket.getInputStream();
 			
 			if(fpacket.getOperation()==1){
-				//readFile();
-				
+				readFile();
 			}
 			ObjectOutputStream oos = new ObjectOutputStream(os);
 			System.err.println("send fpacket");
@@ -57,9 +56,11 @@ public class ClientThread implements Runnable {
 			ObjectInputStream ois = new ObjectInputStream(is);
 			FilePacket resultFilePacket = (FilePacket)ois.readObject();
 			
-			
 			if(resultFilePacket.success()){
 				System.out.println("success");
+				if(resultFilePacket.getOperation()==0){
+					receiveFile(resultFilePacket);
+				}
 			}
 			ois.close();
 			oos.close();	
@@ -68,79 +69,6 @@ public class ClientThread implements Runnable {
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		}
-		
-		
-		//^^^Clean^^^//
-		
-		/*-----Initialize TCP Socket-----*/
-		
-		/*try{
-			Socket clientSocket = new Socket(rmIP, rmPort);
-			
-			DataOutputStream dos = new DataOutputStream(clientSocket.getOutputStream());
-			DataInputStream dis = new DataInputStream(clientSocket.getInputStream());*/
-			//send the action, filename to the server
-			
-		/*-----Upload to the server------*/
-			
-			/*File dir = new File("./");
-			File file = null;
-			
-			if(action.equals("upload")){
-				// /Users/Andrew/Development/EclipseWorkspace/DistributedFileTransfer/src
-				File[] files = new File("./").listFiles();
-				
-				for(File f: files){
-					if(f.isFile() && f.getName().equals(filename)){
-						System.out.println(f.getName());
-						file = f;
-						break;
-						
-					}
-				}
-				if(file != null){
-					dos.write((action+"\n").getBytes());
-					dos.write((filename+"\n").getBytes());
-					FileInputStream fis = new FileInputStream(file);
-					BufferedInputStream bis = new BufferedInputStream(fis);
-					System.out.println("Going to write the file to the stream.");
-					sendFile(dos, fis, bis, file);
-				//dos.writeLong(file.length());
-					
-					
-				}else{
-					System.out.println("There are no files named "+filename+" in this directory.");
-				}
-				
-			}*/
-		
-		/*-----Download from the Server-----*/
-			/*if(action.equals("download")){
-				dos.write((action+"\n").getBytes());
-				dos.write((filename+"\n").getBytes());
-				FileOutputStream fos = new FileOutputStream("./"+filename);
-				BufferedOutputStream bos = new BufferedOutputStream(fos);
-				System.out.println(filename);
-				receiveFile(dis, fos, bos);
-				
-				bos.flush();
-				bos.close();
-			}*/
-			
-		/*-----Get the result of the action, flush, and close-----*/
-			/*int result = dis.readInt();
-			if(result == 1){
-				System.out.print(action+" complete.");
-			}else{
-				System.out.print(action+" failed");
-			}
-			dos.flush();
-			
-			clientSocket.close();
-			udpUtils.close();
-		}catch(IOException e){
-			e.printStackTrace();
-		}*/
 	}
 	
 	
@@ -154,8 +82,9 @@ public class ClientThread implements Runnable {
 		}
 		
 	}
-	private synchronized void receiveFile(){
+	private synchronized void receiveFile(FilePacket fpacket){
 		try {
+			System.err.println("Byte Array: "+fpacket.getBuffer().length);
 			FileOutputStream fos = new FileOutputStream(new File(fpacket.getFilename()));
 			BufferedOutputStream bos = new BufferedOutputStream(fos);
 			bos.write(fpacket.getBuffer());
