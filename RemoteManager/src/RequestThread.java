@@ -7,6 +7,10 @@ import java.util.regex.Pattern;
 
 import java.util.*;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.OutputStream;
 //import java.io.*;
 import java.net.*;
 
@@ -26,19 +30,28 @@ public class RequestThread implements Runnable {
 	
 	@Override
 	public void run() {
-		
-		System.out.println("RequestThread");
-		//udpUtil.setDestination(clientPacket.getAddress());
-		//udpUtil.setDestPort(clientPacket.getPort());
-		String message = new String(clientPacket.getData(), 0, clientPacket.getLength());
-		int numAvailable = availableServers.size();
-		
-		String action = "";
-		String filename = "";
-		filename = message;
-		if(action.equals("upload")){
+		ObjectOutputStream oos = null;
+		ObjectInputStream ois = null;
+		try {
+			OutputStream os = client.getOutputStream();
+			InputStream is = client.getInputStream();
+			oos = new ObjectOutputStream(os);
+			ois = new ObjectInputStream(is);
 			
+			FilePacket fpacket = (FilePacket)ois.readObject();
+			fpacket.success(true);
+			oos.writeObject(fpacket);
+			oos.flush();
+			oos.close();
+			ois.close();
+		} catch (IOException | ClassNotFoundException e) {
+			e.printStackTrace();
 		}
+		
+		
+		
+		/*int numAvailable = availableServers.size();
+	
 		System.out.println("number availble: " + numAvailable);
 		if(numAvailable!=0){
 			Iterator it = availableServers.keySet().iterator();
@@ -47,7 +60,7 @@ public class RequestThread implements Runnable {
 			System.out.println(i);
 			System.out.println(s[0]+" "+s[1]);
 			System.out.println(availableServers.size());
-			String m = s[0]+":"+s[1];
+			String m = s[0]+":"+s[1];*/
 			/*try {
 				mUtils.sendString(m);
 			} catch (IOException e) {
@@ -55,17 +68,17 @@ public class RequestThread implements Runnable {
 				e.printStackTrace();
 			}*/
 			
-		}else{
+		//}else{
 			/*try {
 				//udpUtil.sendString("none");
 			} catch (IOException e) {
 				e.printStackTrace();
 			}*/
-		}
+		/*}
 		try {
 			Thread.sleep(10000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
-		}
+		}*/
 	}
 }

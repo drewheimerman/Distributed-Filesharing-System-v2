@@ -15,7 +15,11 @@ public class Frontend {
 	
 	public static void main(String[] args) throws IOException {
 		
-		Vector timestamp = new Vector();
+		Vector<Integer> timestamp = new Vector<Integer>(3);
+		timestamp.insertElementAt(0, 0);
+		timestamp.insertElementAt(0, 1);
+		timestamp.insertElementAt(0, 2);
+		
 		MulticastUtilities requestMulticast = null;
 		
 		Properties properties = new Properties();

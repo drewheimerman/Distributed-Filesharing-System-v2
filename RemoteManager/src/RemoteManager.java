@@ -16,9 +16,11 @@ public class RemoteManager {
 	public static void main(String[] args) {
 		
 		int state;
-		Vector stateTimestamp = new Vector();
+		Vector<Integer> stateTimestamp = new Vector<Integer>(3);
+		
 		ConcurrentLinkedDeque updateLog = new ConcurrentLinkedDeque();
 		ConcurrentLinkedDeque committed = new ConcurrentLinkedDeque();
+		ConcurrentLinkedDeque timestampTable = new ConcurrentLinkedDeque();
 		ConcurrentSkipListMap<Integer, String[]> servers = new ConcurrentSkipListMap<Integer, String[]>();
 		
 		//Read in the Properties from config.properties

@@ -40,13 +40,25 @@ public class FrontendThread implements Runnable {
 				strport = new String(response.getData(), 0, response.getLength());
 				matcher = pattern.matcher(strport);
 			}
-			int port = Integer.parseInt(strport);
+			int port = Integer.parseInt(strport); //parse RM TCP port
+			
+			//Connection with the RemoteManager
 			
 			remoteManager = new Socket(response.getAddress(), port);
+			OutputStream rmOS = remoteManager.getOutputStream();
+			InputStream rmIS = remoteManager.getInputStream();
+			ObjectOutputStream rmOOS = new ObjectOutputStream(rmOS);
+			ObjectInputStream rmOIS = new ObjectInputStream(rmIS);
 			
+			rmOOS.writeObject(fpacket);
+			FilePacket resultPacket = (FilePacket)rmOIS.readObject();
+			
+			//END connection with RemoteManager
+			
+			//Send result back to Client
 			ObjectOutputStream oos = new ObjectOutputStream(os);
-			fpacket.success(true);
-			oos.writeObject(fpacket);
+			
+			oos.writeObject(resultPacket);
 			oos.flush();
 			ois.close();
 			oos.close();

@@ -25,7 +25,7 @@ public class Client {
 		MulticastUtilities requestMulticast = null;
 		InetAddress feAddress = null;
 		
-		//Set the address for the Frontend provided in the args
+		//Set the address for the Frontend provided in the args (args[0])
 		try {
 			feAddress = InetAddress.getByName(args[0]);
 		} catch (UnknownHostException e1) {
