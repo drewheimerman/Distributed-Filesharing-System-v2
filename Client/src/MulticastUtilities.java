@@ -105,20 +105,20 @@ public class MulticastUtilities {
 	 * 
 	 */
 	
-	public Object readFrosocket() throws IOException{
+	public Object readFromSocket() throws IOException{
 		byte[] buffer = new byte[BUFFER_SIZE];
 		DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
 		socket.receive(packet);
 		Object received = deserializeObject(buffer);
 		return 	received;
 	}
-	public String readStringFrosocket() throws IOException{
+	public String readStringFromSocket() throws IOException{
 		byte[] buffer = new byte[BUFFER_SIZE];
 		DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
 		socket.receive(packet);
 		return new String(packet.getData(), 0, packet.getLength());
 	}
-	public byte[] readBytesFrosocket() throws IOException{
+	public byte[] readBytesFromSocket() throws IOException{
 		byte[] buffer = new byte[BUFFER_SIZE];
 		DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
 		socket.receive(packet);
@@ -146,8 +146,8 @@ public class MulticastUtilities {
 		}
 	}
 	public void sendToSocket(String s) throws IOException{
-		byte[] buffer = new byte[BUFFER_SIZE];
-		buffer = s.getBytes();
+		//byte[] buffer = new byte[BUFFER_SIZE];
+		byte[] buffer = s.getBytes();
 		if(buffer.length<BUFFER_SIZE){
 			socket.send(new DatagramPacket(buffer,buffer.length, groupIP, port));
 		}else{
