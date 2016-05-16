@@ -9,7 +9,14 @@ public class Server {
 	
 	public static void main(String[] args) {
 		//Read in the Properties from config.properties
-		int sid = Integer.parseInt(args[0]);
+		int sid = 0;
+		InetAddress rmip = null;
+		try{
+			sid = Integer.parseInt(args[0]);
+			rmip = InetAddress.getByName(args[1]);
+		}catch(IOException e){
+			e.printStackTrace();
+		}
 		Properties properties = new Properties();
 		Properties appProps = new Properties(properties);
 		try{
@@ -39,7 +46,7 @@ public class Server {
 			System.exit(2);
 		}
 		//Start ServerHeartbeat thread
-		ServerHeartbeat heartbeat = new ServerHeartbeat(heartbeatMulticast, sid);
+		ServerHeartbeat heartbeat = new ServerHeartbeat(heartbeatMulticast, sid, rmip);
 		Thread serverHeartbeat = new Thread(heartbeat);
 		serverHeartbeat.start();
 		
@@ -52,14 +59,13 @@ public class Server {
 					System.out.println(sid+2000);
 					Socket rm = socket.accept();
 					System.err.println("Accepted ServerSocket");
-					ServerUpdater updater = new ServerUpdater(rm);
+					ServerUpdater updater = new ServerUpdater(rm, sid);
 					Thread u = new Thread(updater);
 					u.start();
 				} catch (IOException e) {
 					
 					e.printStackTrace();
 				}
-				
 			}
 		}catch(Exception e){
 			

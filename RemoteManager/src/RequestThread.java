@@ -18,17 +18,18 @@ public class RequestThread implements Runnable {
 	
 	//private UDPUtilities udpUtil;
 	private ConcurrentSkipListMap<Integer, String[]> availableServers;
-	private DatagramPacket clientPacket;
 	private Socket client;
 	private Socket server;
 	private RemoteManager.Management management;
+	private ConcurrentHashMap<String, Integer> versions;
 	
-	public RequestThread(Socket s, ConcurrentSkipListMap<Integer, String[]> c, DatagramPacket p, RemoteManager.Management m){
+	public RequestThread(Socket s, ConcurrentSkipListMap<Integer, String[]> c, RemoteManager.Management m, ConcurrentHashMap<String, Integer> v){
 		//udpUtil = new UDPUtilities();
 		availableServers = c;
-		clientPacket = p;
 		client = s;
 		management = m;
+		versions = v;
+		
 	}
 	
 	@Override
@@ -45,73 +46,63 @@ public class RequestThread implements Runnable {
 			System.err.println("get FilePacket");
 			//IF THE FilePacket HAS A TIMESTAMP <= THE RM TIMESTAMP
 			System.out.println(fpacket.getPreviousTimestamp()+""+management.getStateTimestamp());
+			
+			
 			if(fpacket.getPreviousTimestamp().get(0) <= management.getStateTimestamp().get(0) 
 					&& fpacket.getPreviousTimestamp().get(1) <= management.getStateTimestamp().get(1) 
-					&& fpacket.getPreviousTimestamp().get(2) <= management.getStateTimestamp().get(2)){
-				Iterator it = availableServers.keySet().iterator();
-				System.err.println("About to iterate");
-				while(it.hasNext()){
-					System.err.println("iterating");
-					Integer i = (Integer) it.next();
-					String[] s = availableServers.get(i);
-					server = new Socket(InetAddress.getByName(s[0]), i+2000);
+					&& fpacket.getPreviousTimestamp().get(2) <= management.getStateTimestamp().get(2))
+			{	
+					//int temp = management.getStateTimestamp().get(management.rmid);
+					//management.getStateTimestamp().set(management.rmid, temp++);
 					
-					OutputStream sos = server.getOutputStream();
-					InputStream sis = server.getInputStream();
-					ObjectOutputStream serverOOP = new ObjectOutputStream(sos);
-					ObjectInputStream serverOIS = new ObjectInputStream(sis);
-					
-					serverOOP.writeObject(fpacket);
-					fpacket = (FilePacket) serverOIS.readObject();
-				}
-				//fpacket = (FilePacket)ois.readObject();
-				oos.writeObject(fpacket);
+					versions.put(fpacket.getFilename(), 0);
+					Iterator it = availableServers.keySet().iterator();
+					System.err.println("About to iterate");
+					while(it.hasNext()){
+						synchronized(management.lock){
+							System.err.println("iterating");
+							Integer i = (Integer) it.next();
+							String[] s = availableServers.get(i);
+							server = new Socket(InetAddress.getByName(s[0]), i+2000);
+							
+							OutputStream sos = server.getOutputStream();
+							InputStream sis = server.getInputStream();
+							ObjectOutputStream serverOOP = new ObjectOutputStream(sos);
+							ObjectInputStream serverOIS = new ObjectInputStream(sis);
+							
+							serverOOP.writeObject(fpacket);
+							fpacket = (FilePacket) serverOIS.readObject();
+							if(fpacket.getOperation()==0){
+								break;
+							}
+						}
+					}
+					if(fpacket.success()){
+						
+						//management.committed.put(fpacket.getUuid(), );
+					}
+					//fpacket = (FilePacket)ois.readObject();
+					//Vector<Integer> vector = management.get
+					fpacket.setTimestamp((Vector<Integer>)management.getStateTimestamp().clone());
+					oos.writeObject(fpacket);
 				
 			}else{
 				System.out.println("HERE");
-				management.holdback.add(fpacket);
+				
+				//UpdateRequestThread req = new UpdateRequestThread(management);
+				//Thread request = new Thread(req);
+				//request.start();
+				//request.join();
+				
+				//management.holdback.add(fpacket);
 			}
-			
 			//fpacket.success(true);
 			//oos.writeObject(fpacket);
 			oos.flush();
 			//oos.close();
 			//ois.close();
-		} catch (IOException | ClassNotFoundException e) {
+		}catch(IOException | ClassNotFoundException e){
 			e.printStackTrace();
 		}
-		
-		
-		
-		/*int numAvailable = availableServers.size();
-	
-		System.out.println("number availble: " + numAvailable);
-		if(numAvailable!=0){
-			Iterator it = availableServers.keySet().iterator();
-			Integer i = (Integer) it.next();
-			String[] s = availableServers.get(i);
-			System.out.println(i);
-			System.out.println(s[0]+" "+s[1]);
-			System.out.println(availableServers.size());
-			String m = s[0]+":"+s[1];*/
-			/*try {
-				mUtils.sendString(m);
-			} catch (IOException e) {
-				
-				e.printStackTrace();
-			}*/
-			
-		//}else{
-			/*try {
-				//udpUtil.sendString("none");
-			} catch (IOException e) {
-				e.printStackTrace();
-			}*/
-		/*}
-		try {
-			Thread.sleep(10000);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}*/
 	}
 }

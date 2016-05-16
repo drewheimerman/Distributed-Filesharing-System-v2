@@ -11,13 +11,13 @@ public class HeartbeatMonitor implements Runnable {
 	private int sid;
 	private int serverPort;
 	
-	private ConcurrentSkipListMap<Integer, String[]> availableServers;
+	private ConcurrentSkipListMap<Integer, String[]> availableRMs;
 	
 	public HeartbeatMonitor(UDPUtilities u, ConcurrentSkipListMap<Integer, String[]> c, int sid){
 		//mUtil = m;
 		//id = i;
 		udpUtil = u;
-		availableServers = c;
+		availableRMs = c;
 		this.sid = sid;
 	}
 	
@@ -25,24 +25,22 @@ public class HeartbeatMonitor implements Runnable {
 	public void run() {
 		try {
 			//Send the server the port to which to send the heartbeat and set timeout to 15s
-			ByteBuffer bbuff = ByteBuffer.allocate(4);
-			bbuff.putInt(udpUtil.getSelfPort());
-			udpUtil.sendBytes(bbuff.array());
+			udpUtil.sendString(""+udpUtil.getSelfPort());
 			System.out.println("Started heartbeat monitor.");
-			udpUtil.getIncomingSocket().setSoTimeout(4000);
+			udpUtil.getIncomingSocket().setSoTimeout(15000);
 			while(true){
 				try{
 					//Block listen until heartbeat or timeout.
 					DatagramPacket received = udpUtil.listen();
 					String message = new String(received.getData(), 0, received.getLength());
-					udpUtil.sendString("ack");
+					
 				}catch(SocketTimeoutException e){
 					
 					//Remove server from active server list if it does not respond within 15s
 					System.out.println("lost connection.");
-					availableServers.remove(sid);
-					System.out.println(availableServers.size()+" servers alive.");
-					for(int k : availableServers.keySet()){
+					availableRMs.remove(sid);
+					System.out.println(availableRMs.size()+" RMs alive.");
+					for(int k : availableRMs.keySet()){
 						System.out.print("Server: "+k+" ");
 					}
 					break;

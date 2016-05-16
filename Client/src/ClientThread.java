@@ -61,6 +61,7 @@ public class ClientThread implements Runnable {
 				if(resultFilePacket.getOperation()==0){
 					receiveFile(resultFilePacket);
 				}
+				System.out.println(fpacket.getPreviousTimestamp());
 			}
 			ois.close();
 			oos.close();	
