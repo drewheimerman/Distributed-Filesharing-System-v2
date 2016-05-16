@@ -12,15 +12,12 @@ public class HeartbeatPulse implements Runnable {
 	public void run() {
 		while(true){
 			try{
-				String s = Integer.toString(port);
-				//int i = Integer.parseInt(s);
-				//System.out.println(i);
-				heartbeatMulticast.sendToSocket(s);
+				heartbeatMulticast.sendToSocket(""+port);
 			}catch(Exception e){
 				e.printStackTrace();
 			}
 			try {
-				Thread.sleep(1000);
+				Thread.sleep(5000);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 				break;
