@@ -4,16 +4,19 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Iterator;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentSkipListMap;
 
 public class Updater implements Runnable {
 
 	private RemoteManager.Management management;
 	private ConcurrentSkipListMap<Integer, String[]> servers;
+	private ConcurrentHashMap<String, Integer> versions;
 	
-	public Updater(RemoteManager.Management m, ConcurrentSkipListMap<Integer, String[]> s){
+	public Updater(RemoteManager.Management m, ConcurrentSkipListMap<Integer, String[]> s, ConcurrentHashMap<String, Integer> v){
 		management = m;
-		servers = s;
+		servers = s;	
+		versions = v;
 	}
 	
 	@Override
@@ -49,24 +52,30 @@ public class Updater implements Runnable {
 						
 						
 					}*/
-					FilePacket fpacket = new FilePacket();
-					Iterator it = servers.keySet().iterator();
-					while(it.hasNext()){
-						synchronized(management.lock){
-							System.err.println("iterating");
-							Integer i = (Integer) it.next();
-							String[] s = servers.get(i);
-							Socket sock2 = new Socket(InetAddress.getByName(s[0]), i+2000);
-							
-							OutputStream sos = sock2.getOutputStream();
-							InputStream sis = sock2.getInputStream();
-							ObjectOutputStream serverOOP = new ObjectOutputStream(sos);
-							ObjectInputStream serverOIS = new ObjectInputStream(sis);
-							
-							serverOOP.writeObject(fpacket);
-							fpacket = (FilePacket) serverOIS.readObject();
-							if(fpacket.getOperation()==0){
-								break;
+					Iterator fit = versions.keySet().iterator();
+					//System.err.println(path.getPath());
+					while(fit.hasNext()){
+						String name = (String)fit.next();
+						FilePacket fpacket = new FilePacket();
+						fpacket.setFilename(name);
+						Iterator it = servers.keySet().iterator();
+						while(it.hasNext()){
+							synchronized(management.lock){
+								System.err.println("iterating");
+								Integer i = (Integer) it.next();
+								String[] s = servers.get(i);
+								Socket sock2 = new Socket(InetAddress.getByName(s[0]), i+2000);
+								
+								OutputStream sos = sock2.getOutputStream();
+								InputStream sis = sock2.getInputStream();
+								ObjectOutputStream serverOOP = new ObjectOutputStream(sos);
+								ObjectInputStream serverOIS = new ObjectInputStream(sis);
+								
+								serverOOP.writeObject(fpacket);
+								fpacket = (FilePacket) serverOIS.readObject();
+								if(fpacket.getOperation()==0){
+									break;
+								}
 							}
 						}
 					}

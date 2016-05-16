@@ -1,6 +1,7 @@
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.ServerSocket;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentSkipListMap;
 import java.util.concurrent.ExecutorService;
 
@@ -14,10 +15,12 @@ public class UpdateManager implements Runnable {
 	private ConcurrentSkipListMap<Integer, String[]> servers;
 	private ServerSocket serverSocket;
 	private RemoteManager.Management management;
+	private ConcurrentHashMap<String, Integer> versions;
 	
-	public UpdateManager(RemoteManager.Management m, ConcurrentSkipListMap<Integer, String[]> s){
+	public UpdateManager(RemoteManager.Management m, ConcurrentSkipListMap<Integer, String[]> s, ConcurrentHashMap<String, Integer> v){
 		management = m;
 		servers = s;
+		versions = v;
 	}
 	
 	@Override
@@ -34,7 +37,7 @@ public class UpdateManager implements Runnable {
 		UpdateRequestThread urt = new UpdateRequestThread(management, servers);
 		Thread u = new Thread(urt);
 		u.start();
-		Updater updater = new Updater(management, servers);
+		Updater updater = new Updater(management, servers, versions);
 		Thread up = new Thread(updater);
 		up.start();
 	}

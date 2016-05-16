@@ -32,7 +32,7 @@ public class RequestThreadManager implements Runnable {
 	@Override
 	public void run() {
 		try {
-			UpdateManager backgroundUpdateProcess = new UpdateManager(management, servers);
+			UpdateManager backgroundUpdateProcess = new UpdateManager(management, servers, versions);
 			Thread bup = new Thread(backgroundUpdateProcess);
 			bup.start();
 			while(true){

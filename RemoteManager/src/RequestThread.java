@@ -55,7 +55,7 @@ public class RequestThread implements Runnable {
 					//int temp = management.getStateTimestamp().get(management.rmid);
 					//management.getStateTimestamp().set(management.rmid, temp++);
 					
-				
+					versions.put(fpacket.getFilename(), 0);
 					Iterator it = availableServers.keySet().iterator();
 					System.err.println("About to iterate");
 					while(it.hasNext()){
