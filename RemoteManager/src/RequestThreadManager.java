@@ -32,6 +32,9 @@ public class RequestThreadManager implements Runnable {
 	@Override
 	public void run() {
 		try {
+			UpdateManager backgroundUpdateProcess = new UpdateManager(management, servers);
+			Thread bup = new Thread(backgroundUpdateProcess);
+			bup.start();
 			while(true){
 				System.err.println("Socket setup");
 				serverSocket = new ServerSocket(management.rmid+3000);

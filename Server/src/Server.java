@@ -59,7 +59,7 @@ public class Server {
 					System.out.println(sid+2000);
 					Socket rm = socket.accept();
 					System.err.println("Accepted ServerSocket");
-					ServerUpdater updater = new ServerUpdater(rm);
+					ServerUpdater updater = new ServerUpdater(rm, sid);
 					Thread u = new Thread(updater);
 					u.start();
 				} catch (IOException e) {

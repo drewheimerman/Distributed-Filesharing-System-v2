@@ -8,9 +8,10 @@ import java.io.*;
 public class ServerUpdater implements Runnable {
 
 	Socket remoteManager;
-	
-	public ServerUpdater(Socket s){
+	int sid;
+	public ServerUpdater(Socket s, int id){
 			remoteManager = s;
+			sid = id;
 	}
 	
 	
@@ -42,7 +43,7 @@ public class ServerUpdater implements Runnable {
 	}
 	
 	private synchronized void write(FilePacket fpacket){
-		File file = new File("./"+fpacket.getFilename());
+		File file = new File("./"+sid+"/"+fpacket.getFilename());
 		try {
 			FileOutputStream fos = new FileOutputStream(file);
 			if(fpacket.getBuffer()!=null)
@@ -55,7 +56,7 @@ public class ServerUpdater implements Runnable {
 	private synchronized void read(FilePacket fpacket){
 		byte[] buffer = null;
 		try {
-			buffer = Files.readAllBytes((Path)Paths.get(fpacket.getFilename()));
+			buffer = Files.readAllBytes((Path)Paths.get("./"+sid+"/"+fpacket.getFilename()));
 			fpacket.setBuffer(buffer);
 			System.err.println("Byte Array: "+buffer.length);
 			fpacket.success(true);

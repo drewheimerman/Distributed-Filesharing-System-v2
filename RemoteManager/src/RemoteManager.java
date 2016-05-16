@@ -51,7 +51,7 @@ public class RemoteManager {
 		//Create the MulticastUtilities for the RM, join the RemoteManager Multicast Group
 		MulticastUtilities heartbeatMulticast = null;
 		MulticastUtilities serverMulticast = null;
-		MulticastUtilities rmRequestMulticast = null;
+		management.rmRequestMulticast = null;
 		
 		
 		UDPUtilities udpUtilGen = new UDPUtilities(7778);
@@ -60,7 +60,7 @@ public class RemoteManager {
 			management.rmMulticast= new MulticastUtilities(
 					InetAddress.getByName(appProps.getProperty("rmMulticastIP")), 
 					Integer.parseInt(appProps.getProperty("rmMulticastPort")));
-			rmRequestMulticast = new MulticastUtilities(
+			management.rmRequestMulticast = new MulticastUtilities(
 					InetAddress.getByName(appProps.getProperty("rmRequestMulticastIP")),
 					Integer.parseInt(appProps.getProperty("rmRequestMulticastPort")));
 			
@@ -94,6 +94,7 @@ public class RemoteManager {
 	public class Management{
 		public Object lock = new Object();
 		public MulticastUtilities rmMulticast;
+		public MulticastUtilities rmRequestMulticast;
 		public int rmid;
 		/*State Manager*/
 		public int state;
