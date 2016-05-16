@@ -28,12 +28,6 @@ public class UpdateManager implements Runnable {
 		while(servers.size()<3){
 			
 		}
-		try {
-			management.rmMulticast.sendToSocket("request");
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 		UpdateRequestThread urt = new UpdateRequestThread(management, servers);
 		Thread u = new Thread(urt);
 		u.start();

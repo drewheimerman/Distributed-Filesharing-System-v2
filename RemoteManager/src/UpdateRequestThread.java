@@ -19,15 +19,20 @@ public class UpdateRequestThread implements Runnable {
 	public void run() {
 		try{
 			ServerSocket servSocket = new ServerSocket(6161+management.rmid);
+			
 			management.rmRequestMulticast.sendToSocket(Integer.toString(management.rmid));
 			Socket socket = servSocket.accept();
+			System.out.println("Updater socket accepted");
 			InputStream is = socket.getInputStream();
 			ObjectInputStream ois = new ObjectInputStream(is);
-			
+			System.out.println("objectoutputstream");
 			while(true){
-				FilePacket fpacket = (FilePacket)ois.readObject();
 				Iterator it = servers.keySet().iterator();
-				while(it.hasNext()){
+				System.out.println("before loop");
+				FilePacket fpacket = (FilePacket)ois.readObject();
+				System.out.println(fpacket.getFilename());
+				while(it.hasNext() && fpacket != null){
+					System.out.println("before synch");
 					synchronized(management.lock){
 						System.err.println("iterating");
 						Integer i = (Integer) it.next();
@@ -40,13 +45,15 @@ public class UpdateRequestThread implements Runnable {
 						ObjectInputStream serverOIS = new ObjectInputStream(sis);
 						
 						serverOOP.writeObject(fpacket);
+						System.err.println("Sent");
 						fpacket = (FilePacket) serverOIS.readObject();
-						
+						serverOOP.flush();
 					}
 				}
 			}
 			
 		}catch(IOException | ClassNotFoundException e){
+			//e.printStackTrace();
 			System.out.println("Update complete.");
 		}
 	}

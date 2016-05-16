@@ -53,11 +53,12 @@ public class Updater implements Runnable {
 						
 					}*/
 					Iterator fit = versions.keySet().iterator();
-					//System.err.println(path.getPath());
 					while(fit.hasNext()){
 						String name = (String)fit.next();
+						System.err.println(name);
 						FilePacket fpacket = new FilePacket();
 						fpacket.setFilename(name);
+						fpacket.setOperation(0);
 						Iterator it = servers.keySet().iterator();
 						while(it.hasNext()){
 							synchronized(management.lock){
@@ -72,13 +73,17 @@ public class Updater implements Runnable {
 								ObjectInputStream serverOIS = new ObjectInputStream(sis);
 								
 								serverOOP.writeObject(fpacket);
+								
+								//System.err.println(fpacket.getBuffer().length);
 								fpacket = (FilePacket) serverOIS.readObject();
-								if(fpacket.getOperation()==0){
-									break;
-								}
+								fpacket.setOperation(1);
+								oos.writeObject(fpacket);
+								oos.flush();
+								
 							}
 						}
 					}
+					
 				}
 			} catch (IOException | ClassNotFoundException e) {
 				e.printStackTrace();
